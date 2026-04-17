@@ -1,0 +1,13 @@
+REST API -JSON
+
+GET /users: gives all users list [HTML document]
+GET /api/users: gives all users list in json format
+
+GET /api/users/1 : get the user with id = 1.
+GET /api/users/2 : get the user with id = 2.
+GET /api/users/:id  <= here :id helps in dynamically taking any input
+
+POST /api/users : create new users.
+
+PATCH /api/users/1 : update the users with the id - 1.
+DELETE /api/users/2 : delete the user with id - 1.
