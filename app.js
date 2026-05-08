@@ -1,81 +1,44 @@
-const express = require("express");
+const express = require('express');
+const session = require('express-session'); 
 const app = express();
-const router = express.Router();
-const age = require("./midlwr/age.js");
-const user = require(user.json);
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+const FileStore = require('session-file-store')(session);
 
-//app level middleware - it will run for all the routes defined in the app
-//router level middleware - it will run for all the routes defined in the router
-//partial is also used as filder name for the middleware function
+app.use(session({
+    store: new FileStore(),
+    secret: "mysecretkey",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 60 * 50 * 1000 } // Set to true if using HTTPS
+}));
 
-/*
-app.use((req, res, next) =>{
-    console.log("From M1");
-    //if u want to end use res.end() or next to pass to next middleware
-    next();
+app.set('view engine', 'ejs');
+
+app.get('/login', (req, res) => {
+    res.render('login');
 });
 
-app.use((req, res, next) =>{
-    console.log("From M2");
-    next();
+app.post('/login', (req, res) => {
+    const { username} = req.body;
+    req.session.user = { username };
+    res.redirect('/home');
 });
 
-//here this 2 middlewares are at application level and hence it will run before any routes
+app.get('/home', (req, res) => {
+    if(!req.session.user){
+        return res.redirect('/login');
+    }
+    res.render('home');
+});
 
-app.get('/', async(req, res) => {
-    res.send("Hello World");
-})
-
-app.get('/home', async(req, res) => {
-    res.send("Welcome to Home Page");
-})
-
-
-app.listen(3000, () => {
-    console.log("Server is running on port 3000");
-})
-*/
-
-// router.use((req, res, next) =>{
-//     const age = req.query.age;
-//     if(age <= 18){
-//         res.send("You are not allowed to access this page due to underage");
-//         res.end();
-//     }else if(age > 18 && age <= 25){
-//         res.send("You are allowed to access this page but with some restrictions");
-//         next();
-//     }
-//     else {
-//         res.send("You are overage to access this page");
-//         res.end();
-//     }
-    
-// })
-
-// router.use((req, res, next) =>{
-//     age();
-//     next();
-// })
-
-// app.get("/", (req, res) => {
-//     res.send("Welcome ");
-// });
-
-// app.get("/home", age,  (req, res) => {
-//     res.send("Welcome to the Home Page");
-// });
-
-app.get("/displayUserData", (req, res) => {
-    return res.json(user);
-})
-
-app.get("/displayUsername , (req, res) =>{
-    const 
-})}
-app.use((req, res) =>{
-    res.send("404 Not Found");
-})
+app.get('/product', (req, res) => {
+    res.render('product');
+});
 
 app.listen(3000, () => {
-    console.log("Server is running on port 3000");
-})
+    console.log('Server is running on http://localhost:3000');
+});
+
+// render is used to render a view template and send the resulting HTML to the client. In this code, it is used to render the 'login', 'home', and 'product' views when the corresponding routes are accessed.
+// redirect is used to redirect the client to a different URL. In this code, it is not used, but it can be used to redirect users to the login page if they are not authenticated when trying to access protected routes like '/home' or '/product'.
